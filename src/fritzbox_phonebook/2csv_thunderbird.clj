@@ -37,18 +37,22 @@
    (:lastname contact)
    "ignore1"
    "ignore2"
-   ""
+   ""  ;; Mail
    "ignore3"
    (first (:numbers-work contact))
-   (first (:numbers-home contact))
+   (if-let [home (first (:numbers-home contact))]
+           home
+           (nth (:numbers-work contact) 3 nil))
    (second (:numbers-work contact))
    (nth (:numbers-work contact) 2 nil)
-   (first (:numbers-mobile contact))
+   (if-let [mobile (first (:numbers-mobile contact))]
+           mobile
+           (nth (:numbers-work contact) 4 nil))
+   ""  ;; Str
+   ""  ;; Nr
+   ""  ;; Stadt
    ""
-   ""
-   ""
-   ""
-   ""
+   ""  ;; Plz
    "ignore5"
    "ignore6"
    "ignore7"
@@ -65,4 +69,5 @@
    "" "unknown"]))
 
 (defn contacts->thunderbird-csv [contacts]
-  (join "\r\n" (map contact->thunderbird-csv contacts)))
+  (join "\r\n" (map contact->thunderbird-csv (remove #(and (empty? (:firstname %)) (empty? (:lastname %)))
+                                                     contacts))))
